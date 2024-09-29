@@ -1,99 +1,232 @@
+/* General Reset */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
+   
 }
 
 body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4; 
+    color: #333; 
+}
+
+/* Header Styles */
+.nav {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
+    background-color: #4CAF50; /* Green background for header */
+    padding: 15px 20px;
 }
-.file-input-container {
+
+.nav .logo {
+    font-size: 1.5em;
+    color: white; /* Logo color */
+    font-weight: bold;
+}
+
+.nav ul {
+    list-style: none;
     display: flex;
-    justify-content: center; /* Centers the file input horizontally */
-    margin-top: 20px;
 }
 
-.upload-container {
+.nav li {
+    margin-left: 20px;
+}
+
+.nav a {
+    text-decoration: none;
+    color: white; /* Link color */
+    padding: 8px 15px;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.nav a:hover {
+    background-color: #45a049; /* Darker green on hover */
+    border-radius: 5px; /* Rounded corners for hover effect */
+}
+
+/* Hero Section Styles */
+#hero {
+    background-image: url('https://qtxasset.com/cdn-cgi/image/f=auto/https://qtxasset.com/quartz/qcloud5/media/image/fiercehealthcare/1593186840/computer-3343887_1920.jpg/computer-3343887_1920.jpg?VersionId=C4G9tR8FvbYIgUsRle96MiLYMG_wr0b.'); /* Add a background image for hero section */
+    background-size: cover; /* Cover the entire section */
+    background-position: center;
+    color: white; /* Text color for hero */
     text-align: center;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    padding: 40px;
-    width: 800px;
+    padding: 220px 20px;
+    
 }
 
-h1 {
+.hero-section h1 {
+    font-size: 2.5em;
     margin-bottom: 20px;
-    color: #333;
 }
 
-.file-type-options {
-    margin-bottom: 20px;
-    text-align: center;
+.hero-section p {
+    font-size: 1.2em;
 }
 
-label {
-    margin-right: 15px;
-    font-size: 16px;
-    color: #555;
+/* Call to Action Styles */
+.cta-section {
+    background-color: #e7f3fe; /* Light blue background */
+    padding: 20px;
 }
 
-#fileInput {
-    display: none;
-}
-
-.upload-button {
+.cta-button {
+    margin-top: 5px;
+    margin-bottom: 30px;
     display: inline-block;
-    padding: 15px 25px;
-    background-color: #007BFF;
+    background-color: #4CAF50; /* Button color */
     color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 10px;
     transition: background-color 0.3s;
 }
 
-.upload-button:hover {
-    background-color: #0056b3;
+.cta-button:hover {
+    background-color: #45a049; /* Darker green on hover */
 }
 
-#textInputContainer {
-    margin-top: 20px;
+/* Upload Section Styles */
+.upload-main-container{
+    background-image: url('https://cms-api-in.myhealthcare.co/image/20220910103120.jpeg'); /* Add a background image for hero section */
+    background-size: cover; /* Cover the entire section */
+    background-position: center;
+    padding: 100px;
+   
+    background-color: rgb(78, 15, 15); /* White background for upload section */
+    
+    text-align: center;
+}
+.scanOptionsContainer label{
+    margin: 0 10px;
+    font-size: 18px;
+}
+.file-type-options label {
+    margin: 0 10px;
+    font-size: 18px;
+}
+.upload-container {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 800px;
+    background-color: white; /* White background for upload section */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    text-align: center;
 }
 
-#textInput {
+textarea {
     width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    resize: none;
+    max-width: 400px;
+    height: 100px;
+}
+
+.file-input-container {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    
 }
 
 .submit-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
+    margin-top: 10px;
+    background-color: #4CAF50; /* Button color */
     color: white;
+    padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 5px; /* Rounded corners */
     cursor: pointer;
-    font-size: 16px;
     transition: background-color 0.3s;
 }
 
 .submit-button:hover {
-    background-color: #218838;
+    background-color: #45a049; /* Darker green on hover */
 }
 
-#fileInfo {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #555;
+/* Footer Styles */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #4CAF50; /* Green background for footer */
+    color: white; /* Footer text color */
+    position: relative; /* Ensure footer stays at the bottom */
+    bottom: 0;
+    width: 100%;
 }
+
+/* Features Section Styles */
+.features-section {
+   
+    padding: 50px;
+    background-color: #ffffff; /* White background for section */
+   
+    text-align: left; /* Left align text */
+}
+
+.features-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2em; /* Larger font size for section title */
+    color: #333; /* Title color */
+}
+
+.features-section ul {
+    list-style: none; /* Remove default list styles */
+    padding: 0; /* Remove padding */
+}
+
+.features-section li {
+    display: flex; /* Use flexbox for icon and text alignment */
+    align-items: center; /* Center the icon vertically */
+    margin-bottom: 20px; /* Spacing between items */
+ 
+}
+
+@media (max-width: 600px) {
+    .nav ul {
+        flex-direction: column; /* Stack menu items vertically */
+        margin-top: 10px;
+    }
+    
+    .nav li {
+        margin-left: 0; /* Reset margin for vertical alignment */
+        margin-bottom: 10px; /* Spacing between items */
+    }
+
+    #hero {
+        padding: 50px 10px; /* Adjust padding for smaller screens */
+    }
+
+    .hero-section h1 {
+        font-size: 1.8em; /* Adjust font size for smaller screens */
+    }
+
+    .hero-section p {
+        font-size: 1em; /* Adjust font size for smaller screens */
+    }
+
+    .upload-container,  .cta-section {
+        padding: 15px; /* Adjust padding for smaller screens */
+    }
+
+    .submit-button, .cta-button {
+        padding: 8px 15px; /* Adjust button padding for smaller screens */
+    }
+    .features-section h2 {
+        font-size: 1.5em; /* Adjust font size for smaller screens */
+    }
+
+    .features-section li {
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+
+    .feature-icon {
+        font-size: 1.5em; /* Adjust icon size for smaller screens */
+    }
+}
+
