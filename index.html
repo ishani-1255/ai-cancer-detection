@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Upload Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="upload-container">
+        <h1>Upload Your File</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="file-type-options">
+                <label>
+                    <input type="radio" name="fileType" value="image" > Upload Image
+                </label>
+                <label>
+                    <input type="radio" name="fileType" value="pdf"> Upload PDF
+                </label>
+                <label>
+                    <input type="radio" name="fileType" value="text"> Upload Text
+                </label>
+            </div>
+
+            <!-- Single file input for both image and pdf -->
+            <div class="file-input-container">
+                <input type="file" id="fileInput" name="file" accept="image/*">
+            </div>
+            <!--<label for="fileInput" class="upload-button">Choose File</label>-->
+
+            <!-- Hidden text input that appears when Upload Text is selected -->
+            <div id="textInputContainer" style="display: none;">
+                <textarea id="textInput" name="textInput" rows="4" placeholder="Enter your text here..."></textarea>
+            </div>
+
+            <div id="fileInfo"></div>
+            <button type="submit" class="submit-button">Upload</button>
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
