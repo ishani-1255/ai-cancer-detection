@@ -38,27 +38,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle form submission
     document.getElementById('uploadForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // Prevent form submission for demo purposes
         const fileType = document.querySelector('input[name="fileType"]:checked').value;
 
         if (fileType === 'text') {
             const textInput = document.getElementById('textInput').value.trim();
             if (textInput === '') {
                 alert('Please enter some text.');
-            } else {
-                alert('Text submitted successfully.');
+                e.preventDefault(); // Prevent form submission
             }
         } else {
             if (fileInput.files.length === 0) {
                 alert('Please select a file to upload.');
+                e.preventDefault(); // Prevent form submission
             } else {
                 const scanType = document.querySelector('input[name="scanType"]:checked');
                 if (fileType === 'image' && scanType === null) {
                     alert('Please select a scan type for the image.');
-                } else {
-                    alert('File uploaded successfully.');
+                    e.preventDefault(); // Prevent form submission
                 }
             }
         }
+
+        // Only prevent default if there was a validation error
+        // If all checks pass, the form will submit normally
     });
 });
