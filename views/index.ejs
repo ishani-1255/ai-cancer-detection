@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AI-Powered Cancer Detection Solution</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <nav class="nav">
+        <div class="logo">AI Cancer Detection</div>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="upload.html">Upload</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <div id="hero" class="hero-section">
+        <h1>Revolutionizing Early Cancer Detection</h1>
+        <p>Utilizing AI to provide accurate, early detection of cancer, improving outcomes for patients everywhere.</p>
+    </div>
+
+   <div>
+    <section class="features-section">
+        <h2>Key Features</h2>
+        <ul>
+            <li>
+                
+                <strong>Data Analysis:</strong> Utilizes medical images, genomic data, and electronic health records for comprehensive analysis.
+            </li>
+            <li>
+              
+                <strong>High-Risk Identification:</strong> Detects and alerts healthcare providers to patients at high risk for cancer.
+            </li>
+            <li>
+                
+                <strong>Accurate Classification:</strong> Classifies cancer types and stages with high accuracy for tailored treatment plans.
+            </li>
+            <li>
+               
+                <strong>Real-Time Alerts:</strong> Provides timely alerts to healthcare providers for further screening and intervention.
+            </li>
+            <li>
+                <strong>Enhanced Outcomes:</strong> Aims to improve cancer detection rates and patient outcomes through early intervention.
+            </li>
+        </ul>
+    </section>
+    
+   </div>
+
+   <div class="upload-main-container">
+    <div class="upload-container">
+        <h1>Upload Your File</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="file-type-options">
+                <label>
+                    <input type="radio" name="fileType" value="image" > Upload Image
+                </label>
+                <label>
+                    <input type="radio" name="fileType" value="pdf"> Upload PDF
+                </label>
+                <label>
+                    <input type="radio" name="fileType" value="text"> Upload Text
+                </label>
+            </div>
+
+            <!-- Single file input for image uploads -->
+            <div class="file-input-container">
+                <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;">
+            </div>
+
+            <!-- Hidden text input that appears when Upload Text is selected -->
+            <div id="textInputContainer" style="display: none;">
+                <textarea id="textInput" name="textInput" rows="4" placeholder="Enter your text here..."></textarea>
+            </div>
+
+            <!-- Scan options for image uploads -->
+            <div id="scanOptionsContainer" class="scanOptionsContainer">
+                <p>Select Scan Type:</p>
+                <label>
+                    <input type="radio" name="scanType" value="highLevel"> High-Level Scans
+                </label>
+                <label>
+                    <input type="radio" name="scanType" value="lowLevel"> Low-Level Scans
+                </label>
+            </div>
+
+            <div id="fileInfo"></div>
+            <button type="submit" class="submit-button">Upload</button>
+        </form>
+    </div>
+</div>
+
+ <!-- Call to Action Section -->
+ <section class="cta-section">
+    <h2>Get Started</h2>
+    <p>Join us in revolutionizing cancer detection. Contact us today to learn how our AI solution can benefit your healthcare practice.</p>
+    <a href="#" class="cta-button">Contact Us</a>
+</section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 AI Cancer Detection. All rights reserved.</p>
+    </footer>
+    
+    <script src="/scripts/script.js"></script>
+</body>
+</html>
