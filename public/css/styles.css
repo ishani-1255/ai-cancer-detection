@@ -230,3 +230,31 @@ textarea {
     }
 }
 
+/* Styles for Name Input */
+.name-input-container {
+    margin-bottom: 20px; /* Space between the input and other elements */
+    text-align: left; /* Align text to the left */
+}
+
+.name-input-container label {
+    font-size: 18px; /* Label text size */
+    color: #333; /* Label color */
+    margin-left: 75px;
+}
+
+.name-input-container input {
+    width: 100%; /* Full-width input */
+    max-width: 400px; /* Maximum width */
+    padding: 10px; /* Padding inside input */
+    border: 1px solid #ccc; /* Light border around input */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Input text size */
+    margin-top: 5px; /* Space between label and input */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+.name-input-container input:focus {
+    border-color: #4CAF50; /* Green border when focused */
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.2); /* Green glow on focus */
+}
