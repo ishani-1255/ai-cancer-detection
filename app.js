@@ -30,7 +30,7 @@ app.use(express.json());
 let port = 8080;
 
 app.listen(port, (req, res) => {
-  console.log("Listening to the Port: https://localhost:8080");
+  console.log("Listening to the Port: http://localhost:8080/scan");
 });
 
 app.get("/scan", (req, res) => {
