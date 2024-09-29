@@ -122,4 +122,3 @@ app.post("/scan", upload.single('file'), async (req, res) => {
     res.redirect('/scan'); // Change this to your desired route
   }
 });
-
