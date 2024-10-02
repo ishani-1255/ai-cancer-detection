@@ -65,7 +65,7 @@ To run this project locally, follow the steps below:
 
 4. Run the development server:
     ```bash
-    npm start
+    node app.js
     ```
 
 ## Usage
