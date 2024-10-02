@@ -259,76 +259,14 @@ textarea {
     box-shadow: 0 0 8px rgba(0, 255, 0, 0.2); /* Green glow on focus */
 }
 
-.modal {
+#loadingSpinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
     display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-  
-  .modal-content {
-    background-color: white;
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 10px;
-    width: 50%;
-    max-width: 500px;
-    text-align: center;
-  }
-  
-  .modal-content h2 {
-    color: #4CAF50;
-    margin-bottom: 20px;
-  }
-  
-  .modal-content p {
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
-  
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
-  #cancerType {
-    font-weight: bold;
-    color: #4CAF50;
-  }
-  
-  /* Responsive design for modal */
-  @media (max-width: 600px) {
-    .modal-content {
-      width: 80%;
-      margin: 20% auto;
-    }
-  }
-
-
-  #loadingSpinner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000; /* Ensure it appears above other elements */
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .overlay {
@@ -337,25 +275,29 @@ textarea {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    background: rgba(0, 0, 0, 0.7); /* Changed to translucent black */
+    backdrop-filter: blur(2px); /* Optional: adds a slight blur effect */
 }
 
 .spinner {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
-    width: 40px;
-    height: 40px;
-    border: 5px solid #f3f3f3; /* Light grey */
-    border-top: 5px solid #3498db; /* Blue */
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3; /* Light border for contrast */
+    border-top: 5px solid #4CAF50; /* Green spinner color */
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
+
+/* Rest of your existing CSS styles */
 
 .modal {
     display: none;
@@ -367,9 +309,9 @@ textarea {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     overflow-y: auto;
-  }
+}
   
-  .modal-content {
+.modal-content {
     background-color: #fefefe;
     margin: 20px auto;
     padding: 20px;
@@ -377,59 +319,59 @@ textarea {
     width: 90%;
     max-width: 800px;
     position: relative;
-  }
+}
   
-  .close {
+.close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-  }
+}
   
-  .close:hover,
-  .close:focus {
+.close:hover,
+.close:focus {
     color: black;
     text-decoration: none;
-  }
+}
   
-  .result-container {
+.result-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
+}
   
-  .cancer-result {
+.cancer-result {
     padding: 15px;
     background-color: #f8f9fa;
     border-radius: 5px;
     margin-bottom: 10px;
-  }
+}
   
-  .cancer-result p {
+.cancer-result p {
     margin: 0;
     font-size: 1.1em;
-  }
+}
   
-  #cancerType {
+#cancerType {
     font-weight: bold;
     color: #2c3e50;
-  }
+}
   
-  .document-preview {
+.document-preview {
     border: 1px solid #ddd;
     padding: 15px;
     border-radius: 5px;
     margin-top: 10px;
-  }
+}
   
-  .document-preview h3 {
+.document-preview h3 {
     margin-top: 0;
     margin-bottom: 15px;
     color: #2c3e50;
-  }
+}
   
-  .preview-content {
+.preview-content {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -437,11 +379,11 @@ textarea {
     border-radius: 4px;
     overflow: hidden;
     min-height: 200px;
-  }
+}
   
-  /* Make modal scrollable for long content */
-  @media screen and (max-height: 800px) {
+/* Make modal scrollable for long content */
+@media screen and (max-height: 800px) {
     .modal-content {
-      margin: 10px auto;
+        margin: 10px auto;
     }
-  }
+}
