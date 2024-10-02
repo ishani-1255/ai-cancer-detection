@@ -10,8 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadForm = document.getElementById('uploadForm');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const documentPreview = document.getElementById('documentPreview');
-    const imagePreview = document.getElementById('imagePreview');
-    const pdfPreview = document.getElementById('pdfPreview');
 
     // Function to handle file type changes
     function handleFileTypeChange() {
@@ -22,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleElementDisplay(fileSelectButton, false);
             toggleElementDisplay(textInputContainer, true);
             toggleElementDisplay(scanOptionsContainer, false);
-            clearFileInput();
+            clearFileInput();  // Clear file input when switching to text
         } else {
             toggleElementDisplay(textInputContainer, false);
             toggleElementDisplay(fileSelectButton, true);
@@ -37,6 +35,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         fileInfo.textContent = '';
+    }
+
+    // Function to create document preview
+    function createDocumentPreview(filePath, fileType) {
+        documentPreview.innerHTML = ''; // Clear previous preview
+        
+        if (fileType === 'image') {
+            const img = document.createElement('img');
+            img.src = filePath;
+            img.alt = 'Uploaded Image';
+            documentPreview.appendChild(img);
+        } else if (fileType === 'pdf') {
+            const iframe = document.createElement('iframe');
+            iframe.src = filePath;
+            documentPreview.appendChild(iframe);
+        }
     }
 
     // Function to handle file selection button click
@@ -71,81 +85,52 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
     }
 
-    // Function to display document preview
-   // Function to display document preview
-function displayDocumentPreview(fileType, filePath) {
-    // Reset all preview elements
-    imagePreview.style.display = 'none';
-    pdfPreview.style.display = 'none';
-    documentPreview.style.display = 'none';
+    // Function to handle form submission
+    function handleFormSubmit(event) {
+        event.preventDefault();
 
-    if (fileType === 'text') {
-        return; // No preview for text input
-    }
+        if (!validateForm()) return;
 
-    documentPreview.style.display = 'block';
+        const formData = new FormData(uploadForm);
+        const fileType = document.querySelector('input[name="fileType"]:checked').value;
 
-    if (fileType === 'image') {
-        imagePreview.onload = function() {
-            // Adjust container height after image loads
-            imagePreview.style.display = 'block';
-        };
-        imagePreview.src = filePath;
-    } else if (fileType === 'pdf') {
-        pdfPreview.src = filePath;
-        pdfPreview.style.display = 'block';
-    }
-}
+        // Show the loading spinner
+        toggleElementDisplay(loadingSpinner, true);
 
-// Function to handle form submission
-function handleFormSubmit(event) {
-    event.preventDefault();
+        fetch('/scan', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide the loading spinner
+            toggleElementDisplay(loadingSpinner, false);
 
-    if (!validateForm()) return;
-
-    const formData = new FormData(uploadForm);
-    const fileType = document.querySelector('input[name="fileType"]:checked').value;
-
-    toggleElementDisplay(loadingSpinner, true);
-
-    fetch('/scan', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        toggleElementDisplay(loadingSpinner, false);
-
-        if (data.success) {
-            // Set the cancer type text first
-            cancerTypeSpan.textContent = data.cancerClass[0];
-            
-            // Then handle the preview if available
-            if (data.filePath && fileType !== 'text') {
-                displayDocumentPreview(fileType, data.filePath);
+            if (data.success) {
+                cancerTypeSpan.textContent = data.cancerClass[0];
+                
+                // Create preview for image and PDF files
+                if (fileType !== 'text' && data.filePath) {
+                    createDocumentPreview(data.filePath, fileType);
+                }
+                
+                toggleModal(true);
+            } else {
+                alert('Error uploading data. Please try again.');
             }
-            
-            // Finally show the modal
-            toggleModal(true);
-        } else {
-            alert('Error uploading data. Please try again.');
-        }
-    })
-    .catch(error => {
-        toggleElementDisplay(loadingSpinner, false);
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
-}
+        })
+        .catch(error => {
+            // Hide the loading spinner
+            toggleElementDisplay(loadingSpinner, false);
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }
 
-// Helper function to toggle modal visibility with scroll handling
-function toggleModal(show) {
-    modal.style.display = show ? 'block' : 'none';
-    if (show) {
-        document.body.style.overflow = 'hidden'; 
-    } else {
-        document.body.style.overflow = ''; 
-}
+    // Helper function to toggle modal visibility
+    function toggleModal(show) {
+        modal.style.display = show ? 'block' : 'none';
+    }
 
     // Helper function to toggle element display
     function toggleElementDisplay(element, show) {
@@ -154,7 +139,8 @@ function toggleModal(show) {
 
     // Helper function to clear file input
     function clearFileInput() {
-        fileInput.value = '';
+        fileInput.value = ''; // Clear file input value
+        documentPreview.innerHTML = ''; // Clear preview
     }
 
     // Initialize event listeners
@@ -167,10 +153,18 @@ function toggleModal(show) {
         fileInput.addEventListener('change', displayFileInfo);
         uploadForm.addEventListener('submit', handleFormSubmit);
 
-        closeBtn.addEventListener('click', () => toggleModal(false));
+        // Close modal on button click
+        closeBtn.addEventListener('click', () => {
+            toggleModal(false);
+            documentPreview.innerHTML = ''; // Clear preview when closing modal
+        });
 
+        // Close modal when clicking outside of it
         window.addEventListener('click', event => {
-            if (event.target === modal) toggleModal(false);
+            if (event.target === modal) {
+                toggleModal(false);
+                documentPreview.innerHTML = ''; // Clear preview when closing modal
+            }
         });
     }
 
