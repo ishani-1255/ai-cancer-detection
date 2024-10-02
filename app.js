@@ -145,7 +145,7 @@ app.post("/scan", upload.single("file"), async (req, res) => {
       try {
         extractedTextImg = await imageToText(filePath);
         resultImg = await reportAnalysis(extractedTextImg);
-        console.log("Extracted text from image:", extractedTextImg);
+
       } catch (e) {
         console.error("Error processing image:", e);
         throw new Error(`Failed to process image: ${e.message}`);
@@ -168,9 +168,6 @@ app.post("/scan", upload.single("file"), async (req, res) => {
       cancerClass = [resultPdf];
     }
 
-    console.log("File path:", filePath);
-    console.log("Cancer class:", cancerClass);
-
     // Save the form data to the database
     const formData = new CancerData({
       userName,
@@ -183,8 +180,12 @@ app.post("/scan", upload.single("file"), async (req, res) => {
     await formData.save();
 
     req.flash("success", "Data Uploaded Successfully!");
-    // Send cancer class to frontend
-    res.status(200).json({ success: true, cancerClass });
+    // Send cancer class and filePath to frontend
+    res.status(200).json({ 
+      success: true, 
+      cancerClass,
+      filePath: fileType !== 'text' ? filePath : null  // Only send filePath for non-text uploads
+    });
   } catch (error) {
     console.error("Error in /scan route:", error);
     req.flash("error", error.message || "Failed to submit form or predict cancer class");
@@ -195,7 +196,7 @@ app.post("/scan", upload.single("file"), async (req, res) => {
   }
 });
 
-// ... (rest of the code remains the same)
+
 
 function convertPDFToImageFromURL(
   pdfUrl,
