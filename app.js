@@ -116,7 +116,6 @@ async function reportAnalysis(report) {
 }
 
 
-
 app.post("/scan", upload.single("file"), async (req, res) => {
   try {
     const { userName, fileType, scanType, textInput } = req.body;
@@ -145,7 +144,7 @@ app.post("/scan", upload.single("file"), async (req, res) => {
       try {
         extractedTextImg = await imageToText(filePath);
         resultImg = await reportAnalysis(extractedTextImg);
-
+        
       } catch (e) {
         console.error("Error processing image:", e);
         throw new Error(`Failed to process image: ${e.message}`);
@@ -195,7 +194,6 @@ app.post("/scan", upload.single("file"), async (req, res) => {
     });
   }
 });
-
 
 
 function convertPDFToImageFromURL(
