@@ -60,7 +60,7 @@ To run this project locally, follow the steps below:
     CLOUDINARY_API_KEY=your_cloudinary_key
     CLOUDINARY_API_SECRET=your_cloudinary_secret
     GROQ_API_KEY=your_groq_key
-    PDFCO_API_KEY=your_pdfco_key
+    PDF_API_KEY=your_pdfco_key
     ```
 
 4. Run the development server:
