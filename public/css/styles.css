@@ -357,3 +357,91 @@ textarea {
     100% { transform: rotate(360deg); }
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    position: relative;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+  }
+  
+  .result-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .cancer-result {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .cancer-result p {
+    margin: 0;
+    font-size: 1.1em;
+  }
+  
+  #cancerType {
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  .document-preview {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+  
+  .document-preview h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #2c3e50;
+  }
+  
+  .preview-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f5f5;
+    border-radius: 4px;
+    overflow: hidden;
+    min-height: 200px;
+  }
+  
+  /* Make modal scrollable for long content */
+  @media screen and (max-height: 800px) {
+    .modal-content {
+      margin: 10px auto;
+    }
+  }
