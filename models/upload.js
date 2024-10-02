@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the form data, including predicted cancer class
 const formDataSchema = new mongoose.Schema({
     userName: {
         type: String,

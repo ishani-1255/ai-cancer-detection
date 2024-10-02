@@ -1,65 +1,147 @@
 document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('fileInput');
+    const fileSelectButton = document.getElementById('fileSelectButton');
     const textInputContainer = document.getElementById('textInputContainer');
     const fileInfo = document.getElementById('fileInfo');
     const scanOptionsContainer = document.getElementById('scanOptionsContainer');
+    const modal = document.getElementById('resultModal');
+    const cancerTypeSpan = document.getElementById('cancerType');
+    const closeBtn = document.querySelector('.close');
+    const uploadForm = document.getElementById('uploadForm');
+    const loadingSpinner = document.getElementById('loadingSpinner');
 
-    // Show or hide input fields based on file type selection
-    document.querySelectorAll('input[name="fileType"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (this.value === 'text') {
-                fileInput.style.display = 'none';
-                textInputContainer.style.display = 'block';
-                scanOptionsContainer.style.display = 'none'; // Hide scan options
-                fileInput.value = ''; // clear file input when switching to text
-            } else if (this.value === 'image') {
-                fileInput.style.display = 'block';
-                textInputContainer.style.display = 'none';
-                scanOptionsContainer.style.display = 'block'; // Show scan options
-                fileInput.accept = 'image/*'; // Set accepted file types to image
-            } else {
-                textInputContainer.style.display = 'none';
-                fileInput.style.display = 'block';
-                scanOptionsContainer.style.display = 'none'; // Hide scan options
-                fileInput.accept = '.pdf'; // Set accepted file types to PDF
-            }
-            fileInfo.textContent = ''; // Clear file info on switch
-        });
-    });
-
-    // Display selected file information
-    fileInput.addEventListener('change', function() {
-        if (fileInput.files.length > 0) {
-            fileInfo.textContent = `Selected file: ${fileInput.files[0].name}`;
+    // Function to handle file type changes
+    function handleFileTypeChange() {
+        const selectedFileType = document.querySelector('input[name="fileType"]:checked').value;
+        
+        if (selectedFileType === 'text') {
+            toggleElementDisplay(fileInput, false);
+            toggleElementDisplay(fileSelectButton, false);
+            toggleElementDisplay(textInputContainer, true);
+            toggleElementDisplay(scanOptionsContainer, false);
+            clearFileInput();  // Clear file input when switching to text
         } else {
-            fileInfo.textContent = '';
+            toggleElementDisplay(textInputContainer, false);
+            toggleElementDisplay(fileSelectButton, true);
+            toggleElementDisplay(fileInput, false);
+            
+            if (selectedFileType === 'image') {
+                toggleElementDisplay(scanOptionsContainer, true);
+                fileInput.accept = 'image/*';
+            } else {
+                toggleElementDisplay(scanOptionsContainer, false);
+                fileInput.accept = '.pdf';
+            }
         }
-    });
+        fileInfo.textContent = '';
+    }
 
-    // Handle form submission
-    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    // Function to handle file selection button click
+    function handleFileSelectClick() {
+        fileInput.click();
+    }
+
+    // Function to display selected file information
+    function displayFileInfo() {
+        fileInfo.textContent = fileInput.files.length > 0 ? `Selected file: ${fileInput.files[0].name}` : '';
+    }
+
+    // Function to validate the form before submission
+    function validateForm() {
         const fileType = document.querySelector('input[name="fileType"]:checked').value;
 
         if (fileType === 'text') {
             const textInput = document.getElementById('textInput').value.trim();
-            if (textInput === '') {
+            if (!textInput) {
                 alert('Please enter some text.');
-                e.preventDefault(); // Prevent form submission
+                return false;
             }
         } else {
             if (fileInput.files.length === 0) {
                 alert('Please select a file to upload.');
-                e.preventDefault(); // Prevent form submission
-            } else {
-                const scanType = document.querySelector('input[name="scanType"]:checked');
-                if (fileType === 'image' && scanType === null) {
-                    alert('Please select a scan type for the image.');
-                    e.preventDefault(); // Prevent form submission
-                }
+                return false;
+            } else if (fileType === 'image' && !document.querySelector('input[name="scanType"]:checked')) {
+                alert('Please select a scan type for the image.');
+                return false;
             }
         }
+        return true;
+    }
 
-        // Only prevent default if there was a validation error
-        // If all checks pass, the form will submit normally
-    });
+    // Function to handle form submission
+    function handleFormSubmit(event) {
+        event.preventDefault();
+
+        if (!validateForm()) return;
+
+        const formData = new FormData(uploadForm);
+
+        // Show the loading spinner
+        toggleElementDisplay(loadingSpinner, true);
+
+        fetch('/scan', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide the loading spinner
+            toggleElementDisplay(loadingSpinner, false);
+
+            if (data.success) {
+                cancerTypeSpan.textContent = data.cancerClass[0];
+                toggleModal(true);
+            } else {
+                alert('Error uploading data. Please try again.');
+            }
+        })
+        .catch(error => {
+            // Hide the loading spinner
+            toggleElementDisplay(loadingSpinner, false);
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }
+
+    // Helper function to toggle modal visibility
+    function toggleModal(show) {
+        modal.style.display = show ? 'block' : 'none';
+    }
+
+    // Helper function to toggle element display
+    function toggleElementDisplay(element, show) {
+        element.style.display = show ? 'block' : 'none';
+    }
+
+    // Helper function to clear file input
+    function clearFileInput() {
+        fileInput.value = ''; // Clear file input value
+    }
+
+    // Initialize event listeners
+    function initEventListeners() {
+        document.querySelectorAll('input[name="fileType"]').forEach(radio => {
+            radio.addEventListener('change', handleFileTypeChange);
+        });
+        
+        fileSelectButton.addEventListener('click', handleFileSelectClick);
+        fileInput.addEventListener('change', displayFileInfo);
+        uploadForm.addEventListener('submit', handleFormSubmit);
+
+        // Close modal on button click
+        closeBtn.addEventListener('click', () => toggleModal(false));
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', event => {
+            if (event.target === modal) toggleModal(false);
+        });
+    }
+
+    // Initialize the page
+    function init() {
+        initEventListeners();
+    }
+
+    // Run init on DOMContentLoaded
+    init();
 });
