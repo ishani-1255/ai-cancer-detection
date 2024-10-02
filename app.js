@@ -1,7 +1,11 @@
+const Groq = require("groq-sdk");
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
 const CancerData = require("./models/upload.js");
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const https = require("https");
+const API_KEY = process.env.PDF_API_KEY;
 
 const cloudinary = require("cloudinary").v2;
 const express = require("express");
@@ -26,9 +30,9 @@ const dbUrl = process.env.ATLASDB_URL;
 const store = MongoStore.create({
   mongoUrl: dbUrl,
   crypto: {
-      secret: process.env.SECRET,
+    secret: process.env.SECRET,
   },
-  touchAfter: 24*60*60,
+  touchAfter: 24 * 60 * 60,
 });
 
 store.on("error", (error) => {
@@ -41,9 +45,9 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: true,
   cookie: {
-      expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
   },
 };
 
@@ -53,14 +57,12 @@ async function main() {
 
 main()
   .then(() => {
-      console.log("Connection Succeeded");
+    console.log("Connection Succeeded");
   })
-  .catch((err) => console.log(err))
+  .catch((err) => console.log(err));
 
 app.use(session(sessionOptions));
 app.use(flash());
-
-
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -77,6 +79,22 @@ app.use((req, res, next) => {
   next();
 });
 
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const fs = require("fs");
+
+const dotenv = require("dotenv");
+dotenv.config();
+
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
+function fileToGenerativePart(path, mimeType) {
+  return {
+    inlineData: {
+      data: Buffer.from(fs.readFileSync(path)).toString("base64"),
+      mimeType,
+    },
+  };
+}
 
 let port = 8080;
 
@@ -88,37 +106,186 @@ app.get("/scan", (req, res) => {
   res.render("index.ejs");
 });
 
-app.post("/scan", upload.single('file'), async (req, res) => {
+async function reportAnalysis(report) {
+  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  const prompt = `Predicts the type of cancer. CThe Report include ${report}, though a medical professional should be consulted for an accurate diagnosis and further examination. Analyze the Report in only 3 bullet points`;
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+  return text;
+}
+
+
+
+app.post("/scan", upload.single("file"), async (req, res) => {
   try {
     const { userName, fileType, scanType, textInput } = req.body;
     let filePath;
+    let cancerClass;
+    let resultPdf;
+    let resultImg;
+    let extractedTextImg;
 
-    if (fileType != 'text') {
-      filePath = req.file.path; // Get file path for image or PDF
+    if (fileType === "pdf") {
+      filePath = req.file.path;
+      try {
+        let imageUrls = await convertPDFToImageFromURL(filePath);
+        if (imageUrls && imageUrls.length > 0) {
+          let extractedText = await imageToText(imageUrls[0]);
+          resultPdf = await reportAnalysis(extractedText);
+        } else {
+          throw new Error("No image URLs returned from PDF conversion");
+        }
+      } catch (e) {
+        console.error("Error processing PDF:", e);
+        throw new Error(`Failed to process PDF: ${e.message}`);
+      }
+    } else if (fileType === "image") {
+      filePath = req.file.path;
+      try {
+        extractedTextImg = await imageToText(filePath);
+        resultImg = await reportAnalysis(extractedTextImg);
+        console.log("Extracted text from image:", extractedTextImg);
+      } catch (e) {
+        console.error("Error processing image:", e);
+        throw new Error(`Failed to process image: ${e.message}`);
+      }
+    } else if (fileType === "text") {
+      try {
+        let result = await reportAnalysis(textInput);
+        cancerClass = [result];
+      } catch (e) {
+        console.error("Error processing text input:", e);
+        throw new Error(`Failed to process text input: ${e.message}`);
+      }
+    } else {
+      throw new Error("Invalid file type");
     }
 
+    if (fileType === "image") {
+      cancerClass = [resultImg];
+    } else if (fileType === "pdf") {
+      cancerClass = [resultPdf];
+    }
+
+    console.log("File path:", filePath);
+    console.log("Cancer class:", cancerClass);
+
+    // Save the form data to the database
     const formData = new CancerData({
       userName,
       fileType,
       scanType,
       filePath,
       textInput,
-      cancerClass: [],
+      cancerClass,
     });
-
     await formData.save();
 
-    // Set a success flash message
-    req.flash('success', 'Data Uploaded Successfully!');
-
-    // Redirect back to the form or a success page
-    res.redirect('/scan'); // Change this to your desired route
+    req.flash("success", "Data Uploaded Successfully!");
+    // Send cancer class to frontend
+    res.status(200).json({ success: true, cancerClass });
   } catch (error) {
-    console.error(error);
-    // Set an error flash message
-    req.flash('error', 'Failed to submit form or predict cancer class');
-
-    // Redirect back to the form or an error page
-    res.redirect('/scan'); // Change this to your desired route
+    console.error("Error in /scan route:", error);
+    req.flash("error", error.message || "Failed to submit form or predict cancer class");
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to submit form or predict cancer class",
+    });
   }
 });
+
+// ... (rest of the code remains the same)
+
+function convertPDFToImageFromURL(
+  pdfUrl,
+  pages = "",
+  password = "",
+  imageType = "jpg"
+) {
+  return new Promise((resolve, reject) => {
+    // Prepare URL for PDF to Image API call
+    const queryPath = `/v1/pdf/convert/to/${imageType}`;
+
+    // JSON payload for API request
+    const jsonPayload = JSON.stringify({
+      password: password,
+      pages: pages,
+      url: pdfUrl,
+    });
+
+    const reqOptions = {
+      host: "api.pdf.co",
+      method: "POST",
+      path: queryPath,
+      headers: {
+        "x-api-key": API_KEY,
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(jsonPayload, "utf8"),
+      },
+    };
+
+    // Send request
+    const postRequest = https.request(reqOptions, (response) => {
+      let chunks = [];
+
+      response.on("data", (chunk) => {
+        chunks.push(chunk);
+      });
+
+      response.on("end", () => {
+        const data = JSON.parse(Buffer.concat(chunks).toString());
+        if (data.error === false) {
+          // Resolve with the URLs of the generated image files
+          resolve(data.urls);
+        } else {
+          // Reject with the error message from the API
+          reject(`Error: ${data.message}`);
+        }
+      });
+    });
+
+    postRequest.on("error", (e) => {
+      // Handle request error
+      reject(`Request error: ${e.message}`);
+    });
+
+    // Write request data
+    postRequest.write(jsonPayload);
+    postRequest.end();
+  });
+}
+
+async function imageToText(iurl) {
+  try {
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "user",
+          content: "Extract the text only from the following image. Don't give any description about the image."
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "image_url",
+              image_url: {
+                url: iurl
+              }
+            }
+          ]
+        }
+      ],
+      model: "llama-3.2-11b-vision-preview",
+      temperature: 0.7,
+      max_tokens: 1024,
+      top_p: 1,
+      stream: false,
+      stop: null
+    });
+    return chatCompletion.choices[0].message.content;
+  } catch (error) {
+    console.error("Error in imageToText:", error);
+    throw error;
+  }
+}
